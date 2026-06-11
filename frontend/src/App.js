@@ -27,13 +27,11 @@ function formatText(text) {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
 
-    // Horizontal rule
     if (/^---+$/.test(line.trim())) {
       elements.push(<hr key={key++} className="msg-divider" />);
       continue;
     }
 
-    // Heading line: starts with ### or ## or is ALL CAPS short line or bold-wrapped
     const headingMatch = line.match(/^#{1,3}\s+(.+)$/);
     if (headingMatch) {
       elements.push(
@@ -44,7 +42,6 @@ function formatText(text) {
       continue;
     }
 
-    // Numbered heading like "1. Title" or "Point 1:" on its own short line
     const numberedHeading = line.match(/^(\d+)\.\s+\*\*(.+?)\*\*(.*)$/);
     if (numberedHeading) {
       elements.push(
@@ -55,13 +52,11 @@ function formatText(text) {
       continue;
     }
 
-    // Empty line → paragraph break
     if (!line.trim()) {
       elements.push(<div key={key++} className="msg-gap" />);
       continue;
     }
 
-    // Normal line with inline formatting
     elements.push(
       <span key={key++} className="msg-line">
         {renderInline(line)}
@@ -132,7 +127,6 @@ function MessageActions({ content, onRetry }) {
 
   return (
     <div className="msg-actions">
-      {/* Copy */}
       <button className={`action-btn ${copied ? "active" : ""}`} onClick={copy} title="Copy">
         {copied ? (
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -145,7 +139,6 @@ function MessageActions({ content, onRetry }) {
         )}
       </button>
 
-      {/* Thumbs up */}
       <button className={`action-btn ${liked ? "active" : ""}`} onClick={like} title="Good response">
         <svg width="13" height="13" viewBox="0 0 24 24" fill={liked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
           <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
@@ -153,7 +146,6 @@ function MessageActions({ content, onRetry }) {
         </svg>
       </button>
 
-      {/* Thumbs down */}
       <button className={`action-btn ${disliked ? "active" : ""}`} onClick={dislike} title="Poor response">
         <svg width="13" height="13" viewBox="0 0 24 24" fill={disliked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
           <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/>
@@ -161,7 +153,6 @@ function MessageActions({ content, onRetry }) {
         </svg>
       </button>
 
-      {/* Retry */}
       <button className="action-btn" onClick={onRetry} title="Regenerate response">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <polyline points="1 4 1 10 7 10"/>
@@ -224,12 +215,20 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState("chat");
   const [modeMenuOpen, setModeMenuOpen] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const bottomRef = useRef(null);
   const textareaRef = useRef(null);
   const modeMenuRef = useRef(null);
   const activeChat = chats.find(c => c.id === activeChatId);
   const isNew = activeChat?.messages.length === 1;
+
+  const isMobile = window.innerWidth <= 768;
+
+  useEffect(() => {
+    // On desktop, start with sidebar open
+    if (window.innerWidth > 768) setSidebarOpen(true);
+  }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -239,7 +238,7 @@ export default function App() {
     const ta = textareaRef.current;
     if (ta) {
       ta.style.height = "auto";
-      ta.style.height = Math.min(ta.scrollHeight, 180) + "px";
+      ta.style.height = Math.min(ta.scrollHeight, 120) + "px";
     }
   }, [input]);
 
@@ -253,6 +252,11 @@ export default function App() {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // Close sidebar when clicking overlay on mobile
+  const handleOverlayClick = () => {
+    if (window.innerWidth <= 768) setSidebarOpen(false);
+  };
+
   const newChat = () => {
     const id = Date.now();
     setChats(prev => [
@@ -262,10 +266,20 @@ export default function App() {
     setActiveChatId(id);
     setInput("");
     setMode("chat");
+    if (window.innerWidth <= 768) setSidebarOpen(false);
+  };
+
+  const selectChat = (id) => {
+    setActiveChatId(id);
+    if (window.innerWidth <= 768) setSidebarOpen(false);
   };
 
   const selectMode = (id) => { setMode(id); setModeMenuOpen(false); };
   const clearMode = () => setMode("chat");
+
+  const filteredChats = chats.filter(c =>
+    c.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const streamAnswer = useCallback(async (question, history, targetChatId) => {
     setLoading(true);
@@ -356,13 +370,11 @@ export default function App() {
   const retryLast = async () => {
     if (loading) return;
     const msgs = activeChat?.messages || [];
-    // Find last user message
     const lastUserMsg = [...msgs].reverse().find(m => m.role === "user");
     if (!lastUserMsg) return;
 
     const targetChatId = activeChatId;
 
-    // Remove last assistant message and add fresh empty one
     setChats(prev => prev.map(c => {
       if (c.id !== targetChatId) return c;
       const updated = [...c.messages];
@@ -392,60 +404,88 @@ export default function App() {
   return (
     <div className="layout">
 
+      {/* SIDEBAR OVERLAY (mobile) */}
+      {sidebarOpen && (
+        <div className="sidebar-overlay" onClick={handleOverlayClick} />
+      )}
+
       {/* SIDEBAR */}
-      <aside className={`sidebar ${sidebarOpen ? "" : "collapsed"}`}>
+      <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
         <div className="sidebar-header">
-          <button className="icon-btn" onClick={() => setSidebarOpen(o => !o)}>
+          {/* X button to close */}
+          <button className="icon-btn close-btn" onClick={() => setSidebarOpen(false)}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+
+        {/* New Chat — flat, no button look */}
+        <button className="sidebar-action" onClick={newChat}>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          New chat
+        </button>
+
+        {/* Search chats — flat, no button look */}
+        <div className="sidebar-search-wrap">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input
+            className="sidebar-search"
+            type="text"
+            placeholder="Search chats"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+          />
+        </div>
+
+        <div className="history-label">Recent</div>
+        <div className="chat-history">
+          {filteredChats.map(c => (
+            <button
+              key={c.id}
+              className={`history-item ${c.id === activeChatId ? "active" : ""}`}
+              onClick={() => selectChat(c.id)}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+              <span>{c.title}</span>
+            </button>
+          ))}
+        </div>
+
+        <div className="sidebar-footer">
+          <div className="brand-row">
+            <div className="brand-dot" />
+            <div>
+              <div className="brand-name">Dag Bot</div>
+              <div className="brand-sub">132 books · Bishop Dag Heward-Mills</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      {/* MAIN */}
+      <main className="main">
+
+        {/* Mobile top bar with hamburger */}
+        <div className="mobile-topbar">
+          <button className="icon-btn" onClick={() => setSidebarOpen(true)}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="3" y1="6" x2="21" y2="6"/>
               <line x1="3" y1="12" x2="21" y2="12"/>
               <line x1="3" y1="18" x2="21" y2="18"/>
             </svg>
           </button>
-          {sidebarOpen && (
-            <button className="new-btn" onClick={newChat}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <line x1="12" y1="5" x2="12" y2="19"/>
-                <line x1="5" y1="12" x2="19" y2="12"/>
-              </svg>
-              New chat
-            </button>
-          )}
         </div>
 
-        {sidebarOpen && (
-          <>
-            <div className="history-label">Recent</div>
-            <div className="chat-history">
-              {chats.map(c => (
-                <button
-                  key={c.id}
-                  className={`history-item ${c.id === activeChatId ? "active" : ""}`}
-                  onClick={() => setActiveChatId(c.id)}
-                >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-                  </svg>
-                  <span>{c.title}</span>
-                </button>
-              ))}
-            </div>
-
-            <div className="sidebar-footer">
-              <div className="brand-row">
-                <div className="brand-dot" />
-                <div>
-                  <div className="brand-name">Dag Bot</div>
-                  <div className="brand-sub">132 books · Bishop Dag Heward-Mills</div>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-      </aside>
-
-      {/* MAIN */}
-      <main className="main">
         <div className="messages">
           {isNew ? (
             <div className="welcome">
@@ -476,10 +516,7 @@ export default function App() {
                       </div>
                       {msg.content && !msg.isWelcome && (
                         <div className="msg-footer">
-                          <MessageActions
-                            content={msg.content}
-                            onRetry={retryLast}
-                          />
+                          <MessageActions content={msg.content} onRetry={retryLast} />
                           <SourcesButton sources={msg.sources} />
                         </div>
                       )}

@@ -399,7 +399,14 @@ textarea::placeholder { color: var(--muted); }
 
   .sidebar-overlay.visible { display: block; }
 
-  /* Topbar always visible on mobile, with safe area padding */
+  .topbar {
+    display: flex !important;
+    padding: 14px 14px 6px;
+    flex-shrink: 0;
+    background: var(--bg);
+    position: relative;
+    z-index: 10;
+  }
 
 
   .messages {

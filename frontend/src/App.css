@@ -400,11 +400,7 @@ textarea::placeholder { color: var(--muted); }
   .sidebar-overlay.visible { display: block; }
 
   /* Topbar always visible on mobile, with safe area padding */
-  .topbar {
-    padding: 12px 14px 4px;
-    background: var(--bg);
-    flex-shrink: 0;
-  }
+
 
   .messages {
     padding: 8px 0 12px;

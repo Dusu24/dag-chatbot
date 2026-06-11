@@ -6,8 +6,9 @@ import os
 import re
 
 load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+def get_client():
+    return OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 def format_book_title(raw_title: str) -> str:
     title = re.sub(r'\(\d{4}\)', '', raw_title).strip()
@@ -24,6 +25,7 @@ def format_book_title(raw_title: str) -> str:
 
 
 def expand_query(question: str) -> str:
+    client = get_client()
     response = client.chat.completions.create(
         model="gpt-4o",
         messages=[
@@ -189,6 +191,7 @@ Make the notes thorough enough for a small group Bible study or personal deep st
 
 
 def generate_answer(question: str, chunks: list[dict], history: list[dict] = None) -> str:
+    client = get_client()
     messages = build_prompt(question, chunks, history)
     response = client.chat.completions.create(
         model="gpt-4o",

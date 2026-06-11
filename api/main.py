@@ -80,3 +80,8 @@ async def chat(request: ChatRequest):
         yield f"data: {json.dumps({'type': 'done'})}\n\n"
 
     return StreamingResponse(stream(), media_type="text/event-stream")
+
+@app.get("/debug-env")
+def debug_env():
+    key = os.getenv("OPENAI_API_KEY")
+    return {"key_present": key is not None, "key_prefix": key[:8] if key else "MISSING"}

@@ -223,7 +223,7 @@ export default function App() {
   const activeChat = chats.find(c => c.id === activeChatId);
   const isNew = activeChat?.messages.length === 1;
 
-  const isMobile = window.innerWidth <= 768;
+
 
   useEffect(() => {
     // On desktop, start with sidebar open

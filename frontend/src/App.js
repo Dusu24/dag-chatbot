@@ -34,11 +34,7 @@ function formatText(text) {
 
     const headingMatch = line.match(/^#{1,3}\s+(.+)$/);
     if (headingMatch) {
-      elements.push(
-        <p key={key++} className="msg-heading">
-          {renderInline(headingMatch[1])}
-        </p>
-      );
+      elements.push(<p key={key++} className="msg-heading">{renderInline(headingMatch[1])}</p>);
       continue;
     }
 
@@ -59,8 +55,7 @@ function formatText(text) {
 
     elements.push(
       <span key={key++} className="msg-line">
-        {renderInline(line)}
-        <br />
+        {renderInline(line)}<br />
       </span>
     );
   }
@@ -70,9 +65,7 @@ function formatText(text) {
 
 function renderInline(text) {
   const parts = text.split(/\*\*(.*?)\*\*/g);
-  return parts.map((part, i) =>
-    i % 2 === 1 ? <strong key={i}>{part}</strong> : part
-  );
+  return parts.map((part, i) => i % 2 === 1 ? <strong key={i}>{part}</strong> : part);
 }
 
 function SourcesButton({ sources }) {
@@ -87,15 +80,11 @@ function SourcesButton({ sources }) {
           <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
         </svg>
         Sources ({sources.length})
-        <svg
-          width="10" height="10" viewBox="0 0 24 24"
-          fill="none" stroke="currentColor" strokeWidth="2.5"
-          style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }}
-        >
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+          style={{ transform: open ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }}>
           <polyline points="6 9 12 15 18 9"/>
         </svg>
       </button>
-
       {open && (
         <div className="sources-panel">
           {sources.map((s, i) => (
@@ -112,16 +101,11 @@ function SourcesButton({ sources }) {
 }
 
 function MessageActions({ content, onRetry }) {
-  const [copied, setCopied]   = useState(false);
-  const [liked, setLiked]     = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [liked, setLiked] = useState(false);
   const [disliked, setDisliked] = useState(false);
 
-  const copy = () => {
-    navigator.clipboard.writeText(content);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
+  const copy = () => { navigator.clipboard.writeText(content); setCopied(true); setTimeout(() => setCopied(false), 2000); };
   const like = () => { setLiked(o => !o); setDisliked(false); };
   const dislike = () => { setDisliked(o => !o); setLiked(false); };
 
@@ -129,30 +113,23 @@ function MessageActions({ content, onRetry }) {
     <div className="msg-actions">
       <button className={`action-btn ${copied ? "active" : ""}`} onClick={copy} title="Copy">
         {copied ? (
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <polyline points="20 6 9 17 4 12"/>
-          </svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
         ) : (
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-          </svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
         )}
       </button>
-
       <button className={`action-btn ${liked ? "active" : ""}`} onClick={like} title="Good response">
         <svg width="13" height="13" viewBox="0 0 24 24" fill={liked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
           <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"/>
           <path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
         </svg>
       </button>
-
       <button className={`action-btn ${disliked ? "active" : ""}`} onClick={dislike} title="Poor response">
         <svg width="13" height="13" viewBox="0 0 24 24" fill={disliked ? "currentColor" : "none"} stroke="currentColor" strokeWidth="2">
           <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"/>
           <path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/>
         </svg>
       </button>
-
       <button className="action-btn" onClick={onRetry} title="Regenerate response">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <polyline points="1 4 1 10 7 10"/>
@@ -167,18 +144,10 @@ function UserMessage({ content, onEdit }) {
   const [hovered, setHovered] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const copy = () => {
-    navigator.clipboard.writeText(content);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+  const copy = () => { navigator.clipboard.writeText(content); setCopied(true); setTimeout(() => setCopied(false), 2000); };
 
   return (
-    <div
-      className="user-msg-wrap"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
+    <div className="user-msg-wrap" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
       {hovered && (
         <div className="user-actions">
           <button className="action-btn" onClick={() => onEdit(content)} title="Edit">
@@ -189,14 +158,9 @@ function UserMessage({ content, onEdit }) {
           </button>
           <button className={`action-btn ${copied ? "active" : ""}`} onClick={copy} title="Copy">
             {copied ? (
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                <polyline points="20 6 9 17 4 12"/>
-              </svg>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
             ) : (
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="9" y="9" width="13" height="13" rx="2"/>
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-              </svg>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
             )}
           </button>
         </div>
@@ -215,7 +179,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState("chat");
   const [modeMenuOpen, setModeMenuOpen] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const bottomRef = useRef(null);
   const textareaRef = useRef(null);
@@ -223,11 +187,9 @@ export default function App() {
   const activeChat = chats.find(c => c.id === activeChatId);
   const isNew = activeChat?.messages.length === 1;
 
-
-
   useEffect(() => {
-    // On desktop, start with sidebar open
-    if (window.innerWidth > 768) setSidebarOpen(true);
+    // Mobile: start closed
+    if (window.innerWidth <= 768) setSidebarOpen(false);
   }, []);
 
   useEffect(() => {
@@ -244,18 +206,16 @@ export default function App() {
 
   useEffect(() => {
     const handler = (e) => {
-      if (modeMenuRef.current && !modeMenuRef.current.contains(e.target)) {
-        setModeMenuOpen(false);
-      }
+      if (modeMenuRef.current && !modeMenuRef.current.contains(e.target)) setModeMenuOpen(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Close sidebar when clicking overlay on mobile
-  const handleOverlayClick = () => {
-    if (window.innerWidth <= 768) setSidebarOpen(false);
-  };
+  const isMobileDevice = () => window.innerWidth <= 768;
+
+  const openSidebar = () => setSidebarOpen(true);
+  const closeSidebar = () => setSidebarOpen(false);
 
   const newChat = () => {
     const id = Date.now();
@@ -266,12 +226,12 @@ export default function App() {
     setActiveChatId(id);
     setInput("");
     setMode("chat");
-    if (window.innerWidth <= 768) setSidebarOpen(false);
+    if (isMobileDevice()) closeSidebar();
   };
 
   const selectChat = (id) => {
     setActiveChatId(id);
-    if (window.innerWidth <= 768) setSidebarOpen(false);
+    if (isMobileDevice()) closeSidebar();
   };
 
   const selectMode = (id) => { setMode(id); setModeMenuOpen(false); };
@@ -283,7 +243,6 @@ export default function App() {
 
   const streamAnswer = useCallback(async (question, history, targetChatId) => {
     setLoading(true);
-
     try {
       const res = await fetch(`${API_URL}/chat`, {
         method: "POST",
@@ -318,10 +277,7 @@ export default function App() {
               setChats(prev => prev.map(c => {
                 if (c.id !== targetChatId) return c;
                 const msgs = [...c.messages];
-                msgs[msgs.length - 1] = {
-                  ...msgs[msgs.length - 1],
-                  content: msgs[msgs.length - 1].content + data.token,
-                };
+                msgs[msgs.length - 1] = { ...msgs[msgs.length - 1], content: msgs[msgs.length - 1].content + data.token };
                 return { ...c, messages: msgs };
               }));
               bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -372,7 +328,6 @@ export default function App() {
     const msgs = activeChat?.messages || [];
     const lastUserMsg = [...msgs].reverse().find(m => m.role === "user");
     if (!lastUserMsg) return;
-
     const targetChatId = activeChatId;
 
     setChats(prev => prev.map(c => {
@@ -384,12 +339,8 @@ export default function App() {
       return { ...c, messages: updated };
     }));
 
-    const historyUpToUser = msgs
-      .slice(1)
-      .filter((_, i, arr) => {
-        const lastUserIdx = arr.map(m => m.role).lastIndexOf("user");
-        return i < lastUserIdx;
-      })
+    const historyUpToUser = msgs.slice(1)
+      .filter((_, i, arr) => { const lastUserIdx = arr.map(m => m.role).lastIndexOf("user"); return i < lastUserIdx; })
       .map(m => ({ role: m.role, content: m.content }));
 
     await streamAnswer(lastUserMsg.content, historyUpToUser, targetChatId);
@@ -401,19 +352,27 @@ export default function App() {
 
   const activeMode = MODES.find(m => m.id === mode);
 
+  // Desktop: sidebar takes up space. Mobile: sidebar is fixed overlay.
+  const sidebarClass = [
+    "sidebar",
+    sidebarOpen ? "open" : "collapsed",
+  ].join(" ");
+
   return (
     <div className="layout">
 
-      {/* SIDEBAR OVERLAY (mobile) */}
-      {sidebarOpen && (
-        <div className="sidebar-overlay" onClick={handleOverlayClick} />
-      )}
+      {/* Overlay — only visible on mobile when sidebar is open */}
+      <div
+        className={`sidebar-overlay ${sidebarOpen ? "visible" : ""}`}
+        onClick={closeSidebar}
+      />
 
       {/* SIDEBAR */}
-      <aside className={`sidebar ${sidebarOpen ? "open" : ""}`}>
+      <aside className={sidebarClass}>
         <div className="sidebar-header">
+          <span className="brand-name" style={{ fontSize: "14px", paddingLeft: "6px" }}>Dag Bot</span>
           {/* X button to close */}
-          <button className="icon-btn close-btn" onClick={() => setSidebarOpen(false)}>
+          <button className="icon-btn" onClick={closeSidebar} title="Close">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <line x1="18" y1="6" x2="6" y2="18"/>
               <line x1="6" y1="6" x2="18" y2="18"/>
@@ -421,7 +380,7 @@ export default function App() {
           </button>
         </div>
 
-        {/* New Chat — flat, no button look */}
+        {/* New Chat */}
         <button className="sidebar-action" onClick={newChat}>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <line x1="12" y1="5" x2="12" y2="19"/>
@@ -430,7 +389,7 @@ export default function App() {
           New chat
         </button>
 
-        {/* Search chats — flat, no button look */}
+        {/* Search */}
         <div className="sidebar-search-wrap">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="11" cy="11" r="8"/>
@@ -475,9 +434,9 @@ export default function App() {
       {/* MAIN */}
       <main className="main">
 
-        {/* Mobile top bar with hamburger */}
-        <div className="mobile-topbar">
-          <button className="icon-btn" onClick={() => setSidebarOpen(true)}>
+        {/* Top bar with hamburger — always visible */}
+        <div className="topbar">
+          <button className="icon-btn" onClick={openSidebar} title="Open menu">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="3" y1="6" x2="21" y2="6"/>
               <line x1="3" y1="12" x2="21" y2="12"/>
@@ -493,9 +452,7 @@ export default function App() {
               <p className="welcome-sub">Explore 132 books by Bishop Dag Heward-Mills</p>
               <div className="suggestions">
                 {SUGGESTIONS.map((s, i) => (
-                  <button key={i} className="suggestion" onClick={() => sendMessage(s)}>
-                    {s}
-                  </button>
+                  <button key={i} className="suggestion" onClick={() => sendMessage(s)}>{s}</button>
                 ))}
               </div>
             </div>
@@ -549,25 +506,17 @@ export default function App() {
                   </svg>
                 </button>
               )}
-
               {modeMenuOpen && (
                 <div className="mode-menu">
                   <div className="mode-menu-title">Response mode</div>
                   {MODES.filter(m => m.id !== "chat").map(m => (
-                    <button
-                      key={m.id}
-                      className={`mode-option ${mode === m.id ? "selected" : ""}`}
-                      onClick={() => selectMode(m.id)}
-                    >
+                    <button key={m.id} className={`mode-option ${mode === m.id ? "selected" : ""}`} onClick={() => selectMode(m.id)}>
                       <span className="mode-option-label">{m.label}</span>
                       <span className="mode-option-desc">{m.desc}</span>
                     </button>
                   ))}
                   <div className="mode-menu-divider" />
-                  <button
-                    className={`mode-option ${mode === "chat" ? "selected" : ""}`}
-                    onClick={() => selectMode("chat")}
-                  >
+                  <button className={`mode-option ${mode === "chat" ? "selected" : ""}`} onClick={() => selectMode("chat")}>
                     <span className="mode-option-label">Chat</span>
                     <span className="mode-option-desc">Ask anything</span>
                   </button>
@@ -585,11 +534,7 @@ export default function App() {
               disabled={loading}
             />
 
-            <button
-              className="send-btn"
-              onClick={() => sendMessage()}
-              disabled={loading || !input.trim()}
-            >
+            <button className="send-btn" onClick={() => sendMessage()} disabled={loading || !input.trim()}>
               <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M2 21L23 12 2 3v7l15 2-15 2v7z"/>
               </svg>

@@ -401,11 +401,7 @@ textarea::placeholder { color: var(--muted); }
 
   /* Topbar always visible on mobile, with safe area padding */
   .topbar {
-    padding: 0;
-    padding-top: env(safe-area-inset-top, 12px);
-    padding-left: 14px;
-    padding-right: 14px;
-    padding-bottom: 4px;
+    padding: 12px 14px 4px;
     background: var(--bg);
     flex-shrink: 0;
   }

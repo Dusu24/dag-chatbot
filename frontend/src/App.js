@@ -537,7 +537,7 @@ export default function App() {
               </svg>
             </button>
           </div>
-          <p className="footer-note">Dag Bot answers only from Bishop Dag Heward-Mills' books.</p>
+          <p className="footer-note">Dag Bot answers only from Bishop Dag Heward-Mills&apos; books.</p>
         </div>
       </main>
     </div>

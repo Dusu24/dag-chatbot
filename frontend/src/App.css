@@ -47,7 +47,7 @@ body {
   transition: width 0.2s ease;
   z-index: 50;
 }
-.sidebar.collapsed { width: 0; }
+.sidebar.collapsed { width: 0; overflow: hidden; }
 
 .sidebar-header {
   display: flex;
@@ -368,6 +368,7 @@ textarea::placeholder { color: var(--muted); }
   }
   /* collapsed and open both handled by transform on mobile */
   .sidebar.collapsed {
+    width: 280px !important;
     transform: translateX(-100%);
   }
 

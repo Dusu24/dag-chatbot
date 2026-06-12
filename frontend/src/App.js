@@ -179,7 +179,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState("chat");
   const [modeMenuOpen, setModeMenuOpen] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 768);
   const [searchQuery, setSearchQuery] = useState("");
   const bottomRef = useRef(null);
   const textareaRef = useRef(null);
@@ -188,9 +188,6 @@ export default function App() {
   const isNew = activeChat?.messages.length === 1;
 
   useEffect(() => {
-    // Mobile: start closed
-    if (window.innerWidth <= 768) setSidebarOpen(false);
-  }, []);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });

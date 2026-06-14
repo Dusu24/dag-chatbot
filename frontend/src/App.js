@@ -186,9 +186,6 @@ export default function App() {
   const modeMenuRef = useRef(null);
   const activeChat = chats.find(c => c.id === activeChatId);
   const isNew = activeChat?.messages.length === 1;
-
-  useEffect(() => {
-
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [activeChat?.messages]);

@@ -526,7 +526,7 @@ export default function App() {
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={handleKey}
-              placeholder="Ask anything from Bishop Dag's books..."
+              placeholder="Ask anything from Bishop Dag&apos;s books..."
               rows={1}
               disabled={loading}
             />

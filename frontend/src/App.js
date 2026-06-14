@@ -358,7 +358,7 @@ export default function App() {
   return (
     <div className="layout">
 
-      {/* Overlay — only visible on mobile when sidebar is open */}
+      {/* Overlay - only visible on mobile when sidebar is open */}
       <div
         className={`sidebar-overlay ${sidebarOpen ? "visible" : ""}`}
         onClick={closeSidebar}
@@ -422,7 +422,7 @@ export default function App() {
             <div className="brand-dot" />
             <div>
               <div className="brand-name">Dag Bot</div>
-              <div className="brand-sub">132 books · Bishop Dag Heward-Mills</div>
+              <div className="brand-sub">132 books - Bishop Dag Heward-Mills</div>
             </div>
           </div>
         </div>
@@ -431,7 +431,7 @@ export default function App() {
       {/* MAIN */}
       <main className="main">
 
-        {/* Top bar with hamburger — always visible */}
+        {/* Top bar with hamburger - always visible */}
         <div className="topbar">
           <button className="icon-btn" onClick={openSidebar} title="Open menu">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

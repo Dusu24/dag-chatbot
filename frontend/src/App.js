@@ -17,7 +17,7 @@ const SUGGESTIONS = [
   "How should a pastor handle betrayal?",
 ];
 
-const WELCOME = "Hello. I'm Dag Bot — your guide to Bishop Dag Heward-Mills&apos; teachings across 132 books. What would you like to explore today?";
+const WELCOME = "Hello. I am Dag Bot - your guide to Bishop Dag Heward-Mills teachings across 132 books. What would you like to explore today?";
 
 function formatText(text) {
   const lines = text.split('\n');
